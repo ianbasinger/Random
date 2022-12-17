@@ -1,0 +1,53 @@
+@echo off
+echo Running SFC scan...
+
+REM Set error flag to 0
+set ERROR_FLAG=0
+
+REM Run SFC scan and redirect output to NUL
+sfc /scannow > NUL
+
+REM Check return code of SFC scan
+if %ERRORLEVEL% NEQ 0 (
+  REM Set error flag to 1
+  set ERROR_FLAG=1
+  echo SFC scan failed.
+) else (
+  echo SFC scan complete.
+)
+
+echo Running CHKDSK...
+
+REM Run CHKDSK and redirect output to NUL
+chkdsk C: /f /r > NUL
+
+REM Check return code of CHKDSK
+if %ERRORLEVEL% NEQ 0 (
+  REM Set error flag to 1
+  set ERROR_FLAG=1
+  echo CHKDSK failed.
+) else (
+  echo CHKDSK complete.
+)
+
+echo Running DISM...
+
+REM Run DISM and redirect output to NUL
+dism /online /cleanup-image /restorehealth > NUL
+
+REM Check return code of DISM
+if %ERRORLEVEL% NEQ 0 (
+  REM Set error flag to 1
+  set ERROR_FLAG=1
+  echo DISM failed.
+) else (
+  echo DISM complete.
+)
+
+if %ERROR_FLAG% NEQ 0 (
+  echo One or more tasks failed.
+) else (
+  echo All tasks complete.
+)
+
+pause
